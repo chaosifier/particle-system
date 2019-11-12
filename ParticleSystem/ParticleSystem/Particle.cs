@@ -25,6 +25,12 @@ namespace ParticleSystem
             get { return _age; }
         }
 
+        private int _size;
+        public int Size
+        {
+            get { return _size; }
+        }
+
         private Color _color;
         public Color Color
         {
@@ -37,21 +43,24 @@ namespace ParticleSystem
 
         }
 
-        public Particle(Vector position, Vector velocity, Color color, int age)
+        public Particle(Vector position, Vector velocity, Color color, int age, int size = 5)
         {
             _position = position;
             _velocity = velocity;
             _color = color;
+            _size = size;
 
             if (age > 0)
                 _age = age;
         }
 
-        public void Update()
+        public void Update(bool ignoreAge = false)
         {
             _velocity = _velocity - Environment.GetInstance().Gravity + Environment.GetInstance().Wind;
             _position = _position + _velocity;
-            _age++;
+
+            if (!ignoreAge)
+                _age++;
         }
     }
 }

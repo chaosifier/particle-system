@@ -7,11 +7,15 @@
              mc:Ignorable="d"
              x:Class="ParticleSystem.MainPage">
 
+
     <StackLayout>
-        <StackLayout.GestureRecognizers>
-            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
-        </StackLayout.GestureRecognizers>
-        <forms:SKCanvasView VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="LightBlue" x:Name="theCanvas" PaintSurface="SKCanvasView_PaintSurface"/>
+        <Picker x:Name="thePicker" SelectedIndexChanged="thePicker_SelectedIndexChanged" HorizontalOptions="Center" VerticalOptions="Start"/>
+        <forms:SKCanvasView VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="theCanvas" PaintSurface="SKCanvasView_PaintSurface">
+
+            <forms:SKCanvasView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+            </forms:SKCanvasView.GestureRecognizers>
+        </forms:SKCanvasView>
     </StackLayout>
 
 </ContentPage>

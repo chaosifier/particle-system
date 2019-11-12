@@ -6,14 +6,16 @@ using System.Text;
 
 namespace ParticleSystem
 {
-    public class FallEffect : BaseParticleSystem
+    public class SnowEffect : BaseParticleSystem
     {
         private Random _random = new Random();
-        public FallEffect()
+        public SnowEffect()
         {
-            ParticlesMaxLife = 400;
-            Environment.GetInstance().Wind = Vector.Zero;//new Vector(0.0001f, 0f, 0f);
-            Environment.GetInstance().Gravity = new Vector(0f, -.0001f, 0f);
+            Regenerate = true;
+            MinimumParticlesCount = 600;
+            ParticlesMaxLife = 600;
+            Environment.GetInstance().Wind = Vector.Zero;
+            Environment.GetInstance().Gravity = new Vector(0f, -.00001f, 0f);
         }
 
         public override void AddNewParticle()
@@ -40,6 +42,12 @@ namespace ParticleSystem
                     Particles.RemoveAt(i);
                     particlesCount--;
                 }
+
+                if (Regenerate && particlesCount < MinimumParticlesCount)
+                {
+                    AddNewParticle();
+                    particlesCount++;
+                }
             }
 
             return particlesCount > 0;
@@ -48,10 +56,10 @@ namespace ParticleSystem
         protected override Particle GenerateParticle()
         {
             var velVector = Vector.Zero;
-            var randLife = -1;
-            var posVector = _random.GetRandomVector(new Vector(0, 0, 0), new Vector(1, 1, 0)); 
+            var randLife = _random.Next(200, ParticlesMaxLife);
+            var posVector = _random.GetRandomVector(new Vector(0, -.5f, 0), new Vector(1, 0, 0));
 
-            var particle = new Particle(posVector, velVector, _random.GetRandomColor(), randLife, _random.Next(3, 14));
+            var particle = new Particle(posVector, velVector, Color.Snow, randLife, _random.Next(3, 6));
 
             return particle;
         }

@@ -6,13 +6,14 @@ using System.Text;
 
 namespace ParticleSystem
 {
-    public class FallEffect : BaseParticleSystem
+    public class FountainEffect : BaseParticleSystem
     {
         private Random _random = new Random();
-        public FallEffect()
+        public FountainEffect()
         {
+            Regenerate = true;
+            MinimumParticlesCount = 200;
             ParticlesMaxLife = 400;
-            Environment.GetInstance().Wind = Vector.Zero;//new Vector(0.0001f, 0f, 0f);
             Environment.GetInstance().Gravity = new Vector(0f, -.0001f, 0f);
         }
 
@@ -30,15 +31,18 @@ namespace ParticleSystem
             {
                 updatingParticle = Particles[i];
 
-                updatingParticle.Velocity.X += (float)_random.GetNextDouble(-.0001f, .0001f);
-                updatingParticle.Velocity.Y += (float)_random.GetNextDouble(-.0001f, .0001f);
-
                 updatingParticle.Update();
 
                 if (ParticlesMaxLife != -1 && updatingParticle.Age > ParticlesMaxLife)
                 {
                     Particles.RemoveAt(i);
                     particlesCount--;
+                }
+
+                if (Regenerate && particlesCount < MinimumParticlesCount)
+                {
+                    AddNewParticle();
+                    particlesCount++;
                 }
             }
 
@@ -47,11 +51,12 @@ namespace ParticleSystem
 
         protected override Particle GenerateParticle()
         {
-            var velVector = Vector.Zero;
-            var randLife = -1;
-            var posVector = _random.GetRandomVector(new Vector(0, 0, 0), new Vector(1, 1, 0)); 
+            var velVector = _random.GetRandomVector(new Vector(-0.001f, -0.01f, 0), new Vector(0.01f, 0.001f, 0));
 
-            var particle = new Particle(posVector, velVector, _random.GetRandomColor(), randLife, _random.Next(3, 14));
+            var randLife = _random.Next(100, ParticlesMaxLife);
+            var posVector = new Vector(.5f, .5f, 0);
+
+            var particle = new Particle(posVector, velVector, _random.GetRandomColor(), randLife, _random.Next(2, 10));
 
             return particle;
         }

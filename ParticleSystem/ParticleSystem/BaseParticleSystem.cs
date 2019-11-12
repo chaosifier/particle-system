@@ -10,20 +10,21 @@ namespace ParticleSystem
     {
         protected List<Particle> Particles = new List<Particle>();
         protected bool Regenerate;
+        protected bool RandomizeParticleSize;
         protected Vector Center;
         protected Color DefaultParticleColor;
+        protected int ParticlesMaxLife = 150;
+        protected int MinimumParticlesCount = 150;
 
         protected abstract Particle GenerateParticle();
         public abstract void AddNewParticle();
         public abstract bool Update();
 
-        public int ParticlesMaxLife { get; set; } = 150;
+        //private Random _rand = new Random();
 
         public virtual void Draw(SKCanvas canvas, SKSurface surface, SKImageInfo image)
         {
             Particle curParticle;
-
-            canvas.Clear();
 
             for (int i = 0; i < Particles.Count; i++)
             {
@@ -33,18 +34,10 @@ namespace ParticleSystem
                 {
                     Style = SKPaintStyle.StrokeAndFill,
                     Color = curParticle.Color.ToSKColor(),
-                    StrokeWidth = 5
+                    //StrokeWidth = _rand.Next(2, 20),
                 };
 
-                canvas.DrawCircle(image.Width * curParticle.Position.X, image.Height * curParticle.Position.Y, 2, paint);
-            }
-        }
-
-        public Particle this[int index]
-        {
-            get
-            {
-                return Particles[index];
+                canvas.DrawCircle(image.Width * curParticle.Position.X, image.Height * curParticle.Position.Y, curParticle.Size, paint);
             }
         }
     }

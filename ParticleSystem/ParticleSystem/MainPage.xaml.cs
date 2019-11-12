@@ -16,23 +16,22 @@ namespace ParticleSystem
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
-        //Explosion _explosionSystem;    
-        FallEffect _explosionSystem;
-        Timer tmr;
+        private BaseParticleSystem _particleSystem;
+        private Timer _timer;
+        private List<string> _effectTypes = new List<string>() { "Explosion", "Floaters", "Fall", "Fountain", "Rain", "Snow" };
+        private const int REQUIRED_FPS = 60;
 
         public MainPage()
         {
-            Environment.GetInstance().Gravity = new Vector(0.0f, -0.1f, 0.0f);
-            Environment.GetInstance().Wind = new Vector(0.2f, 0.0f, 0.0f);
-            //_explosionSystem = new Explosion(new Vector(.5f, .5f, 0f));
-            _explosionSystem = new FallEffect();
             InitializeComponent();
+        }
 
-            tmr = new Timer((obj) =>
-           {
-               _explosionSystem.Update();
-               theCanvas.InvalidateSurface();
-           }, null, 1000, 17);
+        protected override void OnAppearing()
+        {
+            thePicker.ItemsSource = _effectTypes;
+            thePicker.SelectedIndex = 0;
+
+            base.OnAppearing();
         }
 
         private void SKCanvasView_PaintSurface(object sender, SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e)
@@ -41,15 +40,62 @@ namespace ParticleSystem
             SKSurface surface = e.Surface;
             SKCanvas canvas = surface.Canvas;
 
-            _explosionSystem.Draw(canvas, surface, info);
+            canvas.Clear();
+
+            _particleSystem?.Draw(canvas, surface, info);
         }
 
         private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
         {
+            if (_particleSystem == null) return;
+
+            if (_timer == null)
+            {
+                _timer = new Timer((obj) =>
+                {
+                    _particleSystem.Update();
+                    theCanvas.InvalidateSurface();
+                }, null, 0, 1000 / REQUIRED_FPS);
+            }
+
             for (int i = 0; i < 200; i++)
             {
-                _explosionSystem.AddNewParticle();
+                _particleSystem.AddNewParticle();
             }
+        }
+
+        private void thePicker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (thePicker.SelectedItem)
+            {
+                case "Explosion":
+                    _particleSystem = new ExplosionEffect();
+                    BackgroundColor = Color.White;
+                    break;
+                case "Floaters":
+                    _particleSystem = new FloatersEffect();
+                    BackgroundColor = Color.White;
+                    break;
+                case "Fall":
+                    _particleSystem = new FallEffect();
+                    BackgroundColor = Color.White;
+                    break;
+                case "Fountain":
+                    _particleSystem = new FountainEffect();
+                    BackgroundColor = Color.White;
+                    break;
+                case "Rain":
+                    _particleSystem = new RainEffect();
+                    BackgroundColor = Color.White;
+                    break;
+                case "Snow":
+                    _particleSystem = new SnowEffect();
+                    BackgroundColor = Color.SkyBlue;
+                    break;
+            }
+            theCanvas.InvalidateSurface();
+            _timer?.Dispose();
+            _timer = null;
         }
     }
 }
