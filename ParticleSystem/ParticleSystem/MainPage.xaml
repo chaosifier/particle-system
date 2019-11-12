@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:forms="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             mc:Ignorable="d"
+             x:Class="ParticleSystem.MainPage">
+
+    <StackLayout>
+        <StackLayout.GestureRecognizers>
+            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+        </StackLayout.GestureRecognizers>
+        <forms:SKCanvasView VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="LightBlue" x:Name="theCanvas" PaintSurface="SKCanvasView_PaintSurface"/>
+    </StackLayout>
+
+</ContentPage>
