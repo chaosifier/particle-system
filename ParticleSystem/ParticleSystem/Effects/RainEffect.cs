@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 
-namespace ParticleSystem
+namespace ParticleSystem.Effects
 {
     public class RainEffect : BaseParticleSystem
     {
@@ -12,8 +12,8 @@ namespace ParticleSystem
         public RainEffect()
         {
             Regenerate = true;
-            MinimumParticlesCount = 600;
-            ParticlesMaxLife = 600;
+            MaximumParticlesCount = 300;
+            ParticlesMaxLife = 400;
             Environment.GetInstance().Wind = new Vector(0.000001f, 0f, 0f);
             Environment.GetInstance().Gravity = new Vector(0f, -.0002f, 0f);
         }
@@ -25,29 +25,32 @@ namespace ParticleSystem
 
         public override bool Update()
         {
-            int particlesCount = Particles.Count;
-            Particle updatingParticle;
-
-            for (int i = 0; i < particlesCount; i++)
+            lock (Particles)
             {
-                updatingParticle = Particles[i];
+                int particlesCount = Particles.Count;
+                Particle updatingParticle;
 
-                updatingParticle.Update();
-
-                if (ParticlesMaxLife != -1 && updatingParticle.Age > ParticlesMaxLife)
+                for (int i = 0; i < particlesCount; i++)
                 {
-                    Particles.RemoveAt(i);
-                    particlesCount--;
+                    updatingParticle = Particles[i];
+
+                    updatingParticle.Update();
+
+                    if (ParticlesMaxLife != -1 && updatingParticle.Age > ParticlesMaxLife)
+                    {
+                        Particles.RemoveAt(i);
+                        particlesCount--;
+                    }
+
+                    if (Regenerate && particlesCount < MaximumParticlesCount)
+                    {
+                        AddNewParticle();
+                        particlesCount++;
+                    }
                 }
 
-                if (Regenerate && particlesCount < MinimumParticlesCount)
-                {
-                    AddNewParticle();
-                    particlesCount++;
-                }
+                return particlesCount > 0;
             }
-
-            return particlesCount > 0;
         }
 
         protected override Particle GenerateParticle()
@@ -56,7 +59,7 @@ namespace ParticleSystem
             var randLife = _random.Next(200, ParticlesMaxLife);
             var posVector = _random.GetRandomVector(new Vector(0, -.5f, 0), new Vector(1, 0, 0));
 
-            var particle = new Particle(posVector, velVector, Color.LightBlue, randLife, _random.Next(3, 6));
+            var particle = new Particle(posVector, velVector, Color.LightBlue, randLife, _random.Next(4, 8));
 
             return particle;
         }

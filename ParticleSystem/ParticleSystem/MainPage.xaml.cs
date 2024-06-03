@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using ParticleSystem.Effects;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,8 +19,9 @@ namespace ParticleSystem
     {
         private BaseParticleSystem _particleSystem;
         private Timer _timer;
-        private List<string> _effectTypes = new List<string>() { "Explosion", "Floaters", "Fall", "Fountain", "Rain", "Snow" };
-        private const int REQUIRED_FPS = 60;
+        private List<string> _effectTypes = new List<string>() { "Explosion", "Floaters", "Fall", "Fountain", "Rain", "Snow", "Space Travel" };
+        private int _refreshDuration = 20;
+        private int _particlesCount = 200;
 
         public MainPage()
         {
@@ -55,13 +57,31 @@ namespace ParticleSystem
                 {
                     _particleSystem.Update();
                     theCanvas.InvalidateSurface();
-                }, null, 0, 1000 / REQUIRED_FPS);
+                }, null, 0, _refreshDuration);
             }
 
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < _particlesCount; i++)
             {
                 _particleSystem.AddNewParticle();
             }
+        }
+
+        private void fpsEntry_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            int newFps = 60;
+
+            int.TryParse(e.NewTextValue, out newFps);
+            _refreshDuration = newFps;
+
+            _timer?.Change(0, _refreshDuration);
+        }
+
+        private void particlesEntry_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            int newParticlesCount = 60;
+
+            int.TryParse(e.NewTextValue, out newParticlesCount);
+            _particlesCount = newParticlesCount;
         }
 
         private void thePicker_SelectedIndexChanged(object sender, EventArgs e)
@@ -91,6 +111,10 @@ namespace ParticleSystem
                 case "Snow":
                     _particleSystem = new SnowEffect();
                     BackgroundColor = Color.SkyBlue;
+                    break;
+                case "Space Travel":
+                    _particleSystem = new SpaceTravelEffect();
+                    BackgroundColor = Color.Black;
                     break;
             }
             theCanvas.InvalidateSurface();

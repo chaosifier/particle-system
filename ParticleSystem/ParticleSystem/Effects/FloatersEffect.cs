@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 
-namespace ParticleSystem
+namespace ParticleSystem.Effects
 {
     public class FloatersEffect : BaseParticleSystem
     {
@@ -12,8 +12,8 @@ namespace ParticleSystem
         public FloatersEffect()
         {
             Regenerate = true;
-            MinimumParticlesCount = 200;
-            ParticlesMaxLife = -1;//1000;
+            MaximumParticlesCount = 200;
+            ParticlesMaxLife = 500;
             Environment.GetInstance().Wind = Vector.Zero;//new Vector(0.0001f, 0f, 0f);
             Environment.GetInstance().Gravity = Vector.Zero; //new Vector(0f, -.0001f, 0f);
         }
@@ -25,33 +25,36 @@ namespace ParticleSystem
 
         public override bool Update()
         {
-            int particlesCount = Particles.Count;
-            Particle updatingParticle;
-
-            for (int i = 0; i < particlesCount; i++)
+            lock (Particles)
             {
-                updatingParticle = Particles[i];
+                int particlesCount = Particles.Count;
+                Particle updatingParticle;
 
-                updatingParticle.Velocity.X += (float)_random.GetNextDouble(-.0001f, .0001f);
-                updatingParticle.Velocity.Y += (float)_random.GetNextDouble(-.0001f, .0001f);
-
-                //updatingParticle.Update();
-                updatingParticle.Update(ParticlesMaxLife == -1);
-
-                if (ParticlesMaxLife != -1 && updatingParticle.Age > ParticlesMaxLife)
+                for (int i = 0; i < particlesCount; i++)
                 {
-                    Particles.RemoveAt(i);
-                    particlesCount--;
+                    updatingParticle = Particles[i];
+
+                    updatingParticle.Velocity.X += (float)_random.GetNextDouble(-.0001f, .0001f);
+                    updatingParticle.Velocity.Y += (float)_random.GetNextDouble(-.0001f, .0001f);
+
+                    //updatingParticle.Update();
+                    updatingParticle.Update(ParticlesMaxLife == -1);
+
+                    if (ParticlesMaxLife != -1 && updatingParticle.Age > ParticlesMaxLife)
+                    {
+                        Particles.RemoveAt(i);
+                        particlesCount--;
+                    }
+
+                    if (Regenerate && particlesCount < MaximumParticlesCount)
+                    {
+                        AddNewParticle();
+                        particlesCount++;
+                    }
                 }
 
-                if (Regenerate && particlesCount < MinimumParticlesCount)
-                {
-                    AddNewParticle();
-                    particlesCount++;
-                }
+                return particlesCount > 0;
             }
-
-            return particlesCount > 0;
         }
 
         protected override Particle GenerateParticle()

@@ -14,7 +14,7 @@ namespace ParticleSystem
         protected Vector Center;
         protected Color DefaultParticleColor;
         protected int ParticlesMaxLife = 150;
-        protected int MinimumParticlesCount = 150;
+        protected int MaximumParticlesCount = 150;
 
         protected abstract Particle GenerateParticle();
         public abstract void AddNewParticle();
@@ -37,7 +37,7 @@ namespace ParticleSystem
                     //StrokeWidth = _rand.Next(2, 20),
                 };
 
-                canvas.DrawCircle(image.Width * curParticle.Position.X, image.Height * curParticle.Position.Y, curParticle.Size, paint);
+                canvas.DrawCircle(image.Width * curParticle.Position.X, image.Height * curParticle.Position.Y, curParticle.Size * curParticle.Position.Z, paint);
             }
         }
     }

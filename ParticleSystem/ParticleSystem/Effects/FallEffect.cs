@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 
-namespace ParticleSystem
+namespace ParticleSystem.Effects
 {
     public class FallEffect : BaseParticleSystem
     {
@@ -23,33 +23,36 @@ namespace ParticleSystem
 
         public override bool Update()
         {
-            int particlesCount = Particles.Count;
-            Particle updatingParticle;
-
-            for (int i = 0; i < particlesCount; i++)
+            lock (Particles)
             {
-                updatingParticle = Particles[i];
+                int particlesCount = Particles.Count;
+                Particle updatingParticle;
 
-                updatingParticle.Velocity.X += (float)_random.GetNextDouble(-.0001f, .0001f);
-                updatingParticle.Velocity.Y += (float)_random.GetNextDouble(-.0001f, .0001f);
-
-                updatingParticle.Update();
-
-                if (ParticlesMaxLife != -1 && updatingParticle.Age > ParticlesMaxLife)
+                for (int i = 0; i < particlesCount; i++)
                 {
-                    Particles.RemoveAt(i);
-                    particlesCount--;
-                }
-            }
+                    updatingParticle = Particles[i];
 
-            return particlesCount > 0;
+                    updatingParticle.Velocity.X += (float)_random.GetNextDouble(-.0001f, .0001f);
+                    updatingParticle.Velocity.Y += (float)_random.GetNextDouble(-.0001f, .0001f);
+
+                    updatingParticle.Update();
+
+                    if (ParticlesMaxLife != -1 && updatingParticle.Age > ParticlesMaxLife)
+                    {
+                        Particles.RemoveAt(i);
+                        particlesCount--;
+                    }
+                }
+
+                return particlesCount > 0;
+            }
         }
 
         protected override Particle GenerateParticle()
         {
             var velVector = Vector.Zero;
             var randLife = -1;
-            var posVector = _random.GetRandomVector(new Vector(0, 0, 0), new Vector(1, 1, 0)); 
+            var posVector = _random.GetRandomVector(new Vector(0, 0, 0), new Vector(1, 1, 0));
 
             var particle = new Particle(posVector, velVector, _random.GetRandomColor(), randLife, _random.Next(3, 14));
 

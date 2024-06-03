@@ -9,7 +9,14 @@
 
 
     <StackLayout>
-        <Picker x:Name="thePicker" SelectedIndexChanged="thePicker_SelectedIndexChanged" HorizontalOptions="Center" VerticalOptions="Start"/>
+        <ScrollView Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Start">
+            <StackLayout HorizontalOptions="FillAndExpand" Orientation="Horizontal" Spacing="20">
+                <Picker x:Name="thePicker" SelectedIndexChanged="thePicker_SelectedIndexChanged" HorizontalOptions="Start" />
+                <Entry Placeholder="Refresh Duration" Text="20" x:Name="fpsEntry" HorizontalOptions="Start" Keyboard="Numeric" TextChanged="fpsEntry_TextChanged"/>
+                <Entry Placeholder="Particles" Text="150" x:Name="particlesEntry" HorizontalOptions="Start" Keyboard="Numeric" TextChanged="particlesEntry_TextChanged"/>
+            </StackLayout>
+        </ScrollView>
+       
         <forms:SKCanvasView VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="theCanvas" PaintSurface="SKCanvasView_PaintSurface">
 
             <forms:SKCanvasView.GestureRecognizers>
