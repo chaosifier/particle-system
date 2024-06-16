@@ -37,7 +37,7 @@ namespace ParticleSystem
                     //StrokeWidth = _rand.Next(2, 20),
                 };
 
-                canvas.DrawCircle(image.Width * curParticle.Position.X, image.Height * curParticle.Position.Y, curParticle.Size * curParticle.Position.Z, paint);
+                canvas.DrawCircle(image.Width * curParticle.Position.X, image.Height * curParticle.Position.Y, curParticle.Size, paint);
             }
         }
     }
